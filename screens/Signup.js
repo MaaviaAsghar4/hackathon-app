@@ -45,7 +45,6 @@ const Signup = ({navigation, SignUpAuth}) => {
         university,
         studentPassword,
       });
-      console.log(studentName, studentEmail, university, studentPassword);
       navigation.replace('StudentForm');
       setStudentName('');
       setUniversity('');
@@ -59,13 +58,6 @@ const Signup = ({navigation, SignUpAuth}) => {
   const handleEmployeeSignin = async () => {
     try {
       setError('');
-      console.log(
-        employeeName,
-        companyName,
-        employeeDesignation,
-        companyEmail,
-        employeePassword,
-      );
       await SignUpAuth(companyEmail, employeePassword);
       database().ref('/Company').push({
         employeeName,

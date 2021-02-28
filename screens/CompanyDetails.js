@@ -23,7 +23,6 @@ const CompanyDetails = ({navigation, logout}) => {
   };
 
   const handleLogout = () => {
-    console.log('object');
     logout();
   };
 

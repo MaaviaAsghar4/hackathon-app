@@ -31,10 +31,13 @@ const Login = ({navigation, SignInAuth}) => {
 
   const handleStudentSignin = async () => {
     try {
-      setError('');
-      await SignInAuth(studentEmail, studentPassword);
-      console.log(studentEmail, studentPassword);
-      navigation.replace('JobRequests');
+      if (studentEmail !== 'abc@abc.com') {
+        setError('');
+        await SignInAuth(studentEmail, studentPassword);
+        navigation.replace('JobRequests');
+      } else {
+        setError('Email belongs to admin');
+      }
     } catch (error) {
       setError('Failed to Login');
     }
@@ -42,10 +45,13 @@ const Login = ({navigation, SignInAuth}) => {
 
   const handleEmployeeSignin = async () => {
     try {
-      setError('');
-      await SignInAuth(companyEmail, employeePassword);
-      console.log(companyEmail, employeePassword);
-      navigation.replace('StudentList');
+      if (companyEmail !== 'abc@abc.com') {
+        setError('');
+        await SignInAuth(companyEmail, employeePassword);
+        navigation.replace('StudentList');
+      } else {
+        setError('Email belongs to admin');
+      }
     } catch (error) {
       setError('Failed to Login');
     }

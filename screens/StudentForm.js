@@ -19,7 +19,6 @@ const StudentForm = ({navigation}) => {
   const [studentSemester, setStudentSemester] = useState('');
 
   const postInfo = async () => {
-    console.log(studentName);
     await AsyncStorage.setItem('studentEmail', studentEmail);
     await AsyncStorage.setItem('studentName', studentName);
     await AsyncStorage.setItem('studentGrade', studentGrade);

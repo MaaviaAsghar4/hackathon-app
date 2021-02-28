@@ -24,7 +24,6 @@ const Admin = ({navigation, SignInAuth}) => {
         setError('');
         await AsyncStorage.setItem('email', email);
         await SignInAuth(email, password);
-        console.log(email, password);
         navigation.replace('AdminDetails');
       }
     } catch (error) {

@@ -18,7 +18,6 @@ const CompanyForm = ({navigation}) => {
   const [companyOverview, setCompanyOverview] = useState('');
 
   const postInfo = async () => {
-    console.log(employeeName);
     await AsyncStorage.setItem('employeeName', employeeName);
     await AsyncStorage.setItem('companyName', companyName);
     await AsyncStorage.setItem('employeeDesignation', employeeDesignation);

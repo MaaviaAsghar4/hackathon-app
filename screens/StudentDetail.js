@@ -20,7 +20,6 @@ const StudentDetail = ({logout, navigation}) => {
   const [studentSemester, setStudentSemester] = useState('');
 
   const handleLogout = async () => {
-    console.log('object');
     logout();
   };
   const routeChange = (route) => {

@@ -8,7 +8,6 @@ const Header = ({routeChange}) => {
     const asyncFunction = async () => {
       const emailAdmin = await AsyncStorage.getItem('email');
       setEmail(emailAdmin);
-      console.log(email);
     };
 
     asyncFunction();

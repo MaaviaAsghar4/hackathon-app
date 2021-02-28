@@ -16,7 +16,6 @@ const AdminDetails = ({logout, navigation}) => {
     navigation.navigate(route);
   };
   const handleLogout = async () => {
-    console.log('object');
     await AsyncStorage.removeItem('email');
     logout();
   };

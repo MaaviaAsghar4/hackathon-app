@@ -29,9 +29,10 @@ const App = () => {
     const func = async () => {
       const emailfn = await AsyncStorage.getItem('email');
       setEmail(emailfn);
-      console.log(email);
     };
-  });
+    func();
+  }, []);
+  console.log(email);
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -42,15 +43,15 @@ const App = () => {
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Admin" component={Admin} />
-          <Stack.Screen name="StudentDetail" component={StudentDetail} />
-          <Stack.Screen name="StudentForm" component={StudentForm} />
+          <Stack.Screen name="AdminDetails" component={AdminDetails} />
+          <Stack.Screen name="CompanyList" component={CompanyList} />
           <Stack.Screen name="JobRequests" component={JobRequests} />
           <Stack.Screen name="StudentList" component={StudentList} />
+          <Stack.Screen name="StudentDetail" component={StudentDetail} />
+          <Stack.Screen name="StudentForm" component={StudentForm} />
           <Stack.Screen name="PostJob" component={PostJob} />
           <Stack.Screen name="CompanyForm" component={CompanyForm} />
           <Stack.Screen name="CompanyDetails" component={CompanyDetails} />
-          <Stack.Screen name="AdminDetails" component={AdminDetails} />
-          <Stack.Screen name="CompanyList" component={CompanyList} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
