@@ -20,6 +20,7 @@ const StudentDetail = ({logout, navigation}) => {
   const [studentSemester, setStudentSemester] = useState('');
 
   const handleLogout = async () => {
+    navigation.replace('Login');
     logout();
   };
   const routeChange = (route) => {

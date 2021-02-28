@@ -24,6 +24,7 @@ const CompanyDetails = ({navigation, logout}) => {
 
   const handleLogout = () => {
     logout();
+    navigation.replace('Login');
   };
 
   useEffect(() => {

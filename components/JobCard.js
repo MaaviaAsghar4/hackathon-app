@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Linking} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
 
 const StudentCard = ({
   companyName,
@@ -8,6 +10,42 @@ const StudentCard = ({
   jobOverview,
   companyEmail,
 }) => {
+  const [email, setEmail] = useState('');
+  let [studentData, setStudentData] = useState([]);
+  const blockUser = () => {
+    database()
+      .ref('/Jobs')
+      .orderByChild('companyEmail')
+      .equalTo(`${companyEmail}`)
+      .once('value')
+      .then((res) =>
+        res.forEach((record) => {
+          record.ref.remove();
+          // console.log(record.key);
+          // console.log(record);
+
+          // setStudentData(record.filter((e) => e.studentEmail === stdEmail));
+        }),
+      );
+    alert('Company Blocked');
+  };
+  useEffect(() => {
+    database()
+      .ref('/Jobs')
+      .on('value', (result) => {
+        studentData = [];
+        result.forEach((childResults) => {
+          studentData.push(childResults.val());
+        });
+        setStudentData(studentData);
+      });
+    const asyncFunction = async () => {
+      const emailAdmin = await AsyncStorage.getItem('email');
+      setEmail(emailAdmin);
+    };
+
+    asyncFunction();
+  }, []);
   return (
     <View style={styles.studentContainer}>
       <Text style={styles.stdName}>Company Name: {companyName}</Text>
@@ -22,6 +60,13 @@ const StudentCard = ({
         }}>
         <Text style={styles.btnText}>Apply</Text>
       </TouchableOpacity>
+      {email === 'abc@abc.com' ? (
+        <TouchableOpacity style={styles.btnContainer} onPress={blockUser}>
+          <Text style={styles.btnText}>Delete</Text>
+        </TouchableOpacity>
+      ) : (
+        <Text></Text>
+      )}
     </View>
   );
 };

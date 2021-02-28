@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Linking} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
 
 const CompanyCard = ({
   companyName,
@@ -8,6 +10,50 @@ const CompanyCard = ({
   companyOverview,
   companyEmail,
 }) => {
+  const [email, setEmail] = useState('');
+  let [studentData, setStudentData] = useState([]);
+  const blockUser = () => {
+    const newValue = {
+      companyEmail: studentData.companyEmail,
+      companyName: studentData.companyName,
+      employeePassword: studentData.employeePassword,
+      employeeName: studentData.employeeName,
+      employeePassword: studentData.employeePassword,
+      blocked: true,
+    };
+    database()
+      .ref('/Company')
+      .orderByChild('companyEmail')
+      .equalTo(`${companyEmail}`)
+      .once('value')
+      .then((res) =>
+        res.forEach((record) => {
+          record.ref.update(newValue);
+          // console.log(record.key);
+          // console.log(record);
+
+          // setStudentData(record.filter((e) => e.studentEmail === stdEmail));
+        }),
+      );
+    alert('Company Blocked');
+  };
+  useEffect(() => {
+    database()
+      .ref('/Company')
+      .on('value', (result) => {
+        studentData = [];
+        result.forEach((childResults) => {
+          studentData.push(childResults.val());
+        });
+        setStudentData(studentData);
+      });
+    const asyncFunction = async () => {
+      const emailAdmin = await AsyncStorage.getItem('email');
+      setEmail(emailAdmin);
+    };
+
+    asyncFunction();
+  }, []);
   return (
     <View style={styles.studentContainer}>
       <Text style={styles.stdName}>Company Name: {companyName}</Text>
@@ -24,6 +70,13 @@ const CompanyCard = ({
         }}>
         <Text style={styles.btnText}>Contact Via Email</Text>
       </TouchableOpacity>
+      {email === 'abc@abc.com' ? (
+        <TouchableOpacity style={styles.btnContainer} onPress={blockUser}>
+          <Text style={styles.btnText}>Block Company</Text>
+        </TouchableOpacity>
+      ) : (
+        <Text></Text>
+      )}
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {signInAuth} from '../store/actions/index';
 import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
 
 const Login = ({navigation, SignInAuth}) => {
   const [showForm, setShowForm] = useState(false);
@@ -18,6 +19,8 @@ const Login = ({navigation, SignInAuth}) => {
   const [companyEmail, setCompanyEmail] = useState('');
   const [employeePassword, setEmployeePassword] = useState('');
   const [error, setError] = useState('');
+  let [studentData, setStudentData] = useState([]);
+  let [companyData, setCompanyData] = useState([]);
 
   const showStudentForm = () => {
     setStatus('Student');
@@ -31,7 +34,23 @@ const Login = ({navigation, SignInAuth}) => {
 
   const handleStudentSignin = async () => {
     try {
-      if (studentEmail !== 'abc@abc.com') {
+      var found = false;
+      for (var i = 0; i < studentData.length; i++) {
+        if (
+          studentData[i].studentEmail === studentEmail &&
+          studentData[i].blocked === true
+        ) {
+          found = true;
+          break;
+        }
+      }
+      if (
+        companyData.filter((e) => e.companyEmail === studentEmail).length > 0
+      ) {
+        setError('You have been registered as Company');
+      } else if (found === true) {
+        setError('you have been blocked by the Admin');
+      } else if (studentEmail !== 'abc@abc.com') {
         setError('');
         await SignInAuth(studentEmail, studentPassword);
         navigation.replace('JobRequests');
@@ -45,7 +64,23 @@ const Login = ({navigation, SignInAuth}) => {
 
   const handleEmployeeSignin = async () => {
     try {
-      if (companyEmail !== 'abc@abc.com') {
+      var found = false;
+      for (var i = 0; i < companyData.length; i++) {
+        if (
+          companyData[i].studentEmail === companyEmail &&
+          companyData[i].blocked === true
+        ) {
+          found = true;
+          break;
+        }
+      }
+      if (
+        studentData.filter((e) => e.studentEmail === companyEmail).length > 0
+      ) {
+        setError('This Email is registered for students');
+      } else if (found === true) {
+        setError('You have been blocked by the company');
+      } else if (companyEmail !== 'abc@abc.com') {
         setError('');
         await SignInAuth(companyEmail, employeePassword);
         navigation.replace('StudentList');
@@ -64,6 +99,26 @@ const Login = ({navigation, SignInAuth}) => {
   const adminLogin = () => {
     navigation.replace('Admin');
   };
+  useEffect(() => {
+    database()
+      .ref('/Company')
+      .on('value', (result) => {
+        companyData = [];
+        result.forEach((childResults) => {
+          companyData.push(childResults.val());
+        });
+        setCompanyData(companyData);
+      });
+    database()
+      .ref('/Students')
+      .on('value', (result) => {
+        studentData = [];
+        result.forEach((childResults) => {
+          studentData.push(childResults.val());
+        });
+        setStudentData(studentData);
+      });
+  }, []);
   return (
     <ScrollView style={styles.mainContainer}>
       <View style={styles.container}>

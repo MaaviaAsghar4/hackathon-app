@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Linking} from 'react-native';
-
+import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const StudentCard = ({
   stdName,
   stdInstitute,
@@ -9,6 +10,51 @@ const StudentCard = ({
   stdOverview,
   stdEmail,
 }) => {
+  const [email, setEmail] = useState('');
+  let [studentData, setStudentData] = useState([]);
+
+  const blockUser = () => {
+    const newValue = {
+      studentEmail: studentData.studentEmail,
+      studentName: studentData.studentName,
+      studentPassword: studentData.studentPassword,
+      university: studentData.university,
+      blocked: true,
+    };
+    database()
+      .ref('/Students')
+      .orderByChild('studentEmail')
+      .equalTo(`${stdEmail}`)
+      .once('value')
+      .then((res) =>
+        res.forEach((record) => {
+          record.ref.update(newValue);
+          // console.log(record.key);
+          // console.log(record);
+
+          // setStudentData(record.filter((e) => e.studentEmail === stdEmail));
+        }),
+      );
+    alert('Student Blocked');
+  };
+
+  useEffect(() => {
+    database()
+      .ref('/Students')
+      .on('value', (result) => {
+        studentData = [];
+        result.forEach((childResults) => {
+          studentData.push(childResults.val());
+        });
+        setStudentData(studentData);
+      });
+    const asyncFunction = async () => {
+      const emailAdmin = await AsyncStorage.getItem('email');
+      setEmail(emailAdmin);
+    };
+
+    asyncFunction();
+  }, []);
   return (
     <View style={styles.studentContainer}>
       <Text style={styles.stdName}>Student Name: {stdName}</Text>
@@ -24,6 +70,13 @@ const StudentCard = ({
         }}>
         <Text style={styles.btnText}>Contact Via Email</Text>
       </TouchableOpacity>
+      {email === 'abc@abc.com' ? (
+        <TouchableOpacity style={styles.btnContainer} onPress={blockUser}>
+          <Text style={styles.btnText}>Block Student</Text>
+        </TouchableOpacity>
+      ) : (
+        <Text></Text>
+      )}
     </View>
   );
 };
