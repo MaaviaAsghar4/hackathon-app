@@ -1,7 +1,7 @@
 # hackathon-app
 This is a Simple College Recruitment App
 
-#Check Different Features Using The Below Mentioned Credentials
+# Check Different Features Using The Below Mentioned Credentials
 
 ## Admin credentials
 email: abc@abc.com
