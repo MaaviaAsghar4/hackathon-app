@@ -7,6 +7,8 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CompanyForm = ({navigation}) => {
   const [employeeName, setEmployeeName] = useState('');
@@ -15,8 +17,20 @@ const CompanyForm = ({navigation}) => {
   const [companyEmail, setCompanyEmail] = useState('');
   const [companyOverview, setCompanyOverview] = useState('');
 
-  const postInfo = () => {
+  const postInfo = async () => {
     console.log(employeeName);
+    await AsyncStorage.setItem('employeeName', employeeName);
+    await AsyncStorage.setItem('companyName', companyName);
+    await AsyncStorage.setItem('employeeDesignation', employeeDesignation);
+    await AsyncStorage.setItem('companyOverview', companyEmail);
+    await AsyncStorage.setItem('companyEmail', companyOverview);
+    database().ref('CompanyInfo').push({
+      employeeName,
+      companyName,
+      companyEmail,
+      employeeDesignation,
+      companyOverview,
+    });
     navigation.replace('StudentList');
   };
   return (
@@ -43,7 +57,7 @@ const CompanyForm = ({navigation}) => {
           style={styles.input}
           value={employeeName}
           onChangeText={(text) => setEmployeeName(text)}
-          placeholder="Enter Your Company Description (e.g. Like What Work You Do?)"
+          placeholder="Enter Your Name "
         />
         <TextInput
           style={styles.input}

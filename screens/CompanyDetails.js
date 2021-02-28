@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,37 @@ import {
   ScrollView,
 } from 'react-native';
 import Header from '../components/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {logout} from '../store/actions/index';
+import {connect} from 'react-redux';
 
-const CompanyDetails = ({navigation}) => {
+const CompanyDetails = ({navigation, logout}) => {
+  const [employeeName, setEmployeeName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [employeeDesignation, setemployeeDesignation] = useState('');
+  const [companyEmail, setCompanyEmail] = useState('');
+  const [companyOverview, setCompanyOverview] = useState('');
+
   const routeChange = (route) => {
     navigation.navigate(route);
   };
+
+  const handleLogout = () => {
+    console.log('object');
+    logout();
+  };
+
+  useEffect(() => {
+    const asyncFunction = async () => {
+      setEmployeeName(await AsyncStorage.getItem('employeeName'));
+      setCompanyName(await AsyncStorage.getItem('companyName'));
+      setemployeeDesignation(await AsyncStorage.getItem('employeeDesignation'));
+      setCompanyEmail(await AsyncStorage.getItem('companyEmail'));
+      setCompanyOverview(await AsyncStorage.getItem('companyOverview'));
+    };
+
+    asyncFunction();
+  }, []);
   return (
     <ScrollView style={styles.mainContainer}>
       <View>
@@ -21,10 +47,14 @@ const CompanyDetails = ({navigation}) => {
         <Text style={styles.companyInfo}>Company Information</Text>
       </View>
       <View style={styles.studentContainer}>
-        <Text style={styles.stdName}>Company Name: {'stdName'}</Text>
-        <Text style={styles.stdName}>Employee Name: {'stdInstitute'}</Text>
-        <Text style={styles.stdName}>Description: {'stdSemester'}</Text>
-        <TouchableOpacity style={styles.btnContainer}>
+        <Text style={styles.stdName}>Company Name: {companyName}</Text>
+        <Text style={styles.stdName}>Employee Name: {employeeName}</Text>
+        <Text style={styles.stdName}>
+          Employee Designation: {employeeDesignation}
+        </Text>
+        <Text style={styles.stdName}>Company Email: {companyEmail}</Text>
+        <Text style={styles.stdName}>Description: {companyOverview}</Text>
+        <TouchableOpacity style={styles.btnContainer} onPress={handleLogout}>
           <Text style={styles.btnText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -77,4 +107,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CompanyDetails;
+const mapDispatchToProps = (dispatch) => ({
+  logout: () => dispatch(logout()),
+});
+
+export default connect(null, mapDispatchToProps)(CompanyDetails);

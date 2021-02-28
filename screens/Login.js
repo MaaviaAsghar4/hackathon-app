@@ -7,14 +7,17 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import {signInAuth} from '../store/actions/index';
+import {connect} from 'react-redux';
 
-const Login = ({navigation}) => {
+const Login = ({navigation, SignInAuth}) => {
   const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState('');
   const [studentEmail, setStudentEmail] = useState('');
   const [studentPassword, setStudentPassword] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [employeePassword, setEmployeePassword] = useState('');
+  const [error, setError] = useState('');
 
   const showStudentForm = () => {
     setStatus('Student');
@@ -26,14 +29,26 @@ const Login = ({navigation}) => {
     setShowForm(true);
   };
 
-  const handleStudentSignin = () => {
-    console.log(studentEmail, studentPassword);
-    navigation.replace('Signup');
+  const handleStudentSignin = async () => {
+    try {
+      setError('');
+      await SignInAuth(studentEmail, studentPassword);
+      console.log(studentEmail, studentPassword);
+      navigation.replace('JobRequests');
+    } catch (error) {
+      setError('Failed to Login');
+    }
   };
 
-  const handleEmployeeSignin = () => {
-    console.log(companyEmail, employeePassword);
-    navigation.replace('StudentList');
+  const handleEmployeeSignin = async () => {
+    try {
+      setError('');
+      await SignInAuth(companyEmail, employeePassword);
+      console.log(companyEmail, employeePassword);
+      navigation.replace('StudentList');
+    } catch (error) {
+      setError('Failed to Login');
+    }
   };
 
   const navigateToLogin = () => {
@@ -59,6 +74,11 @@ const Login = ({navigation}) => {
         {showForm ? (
           status === 'Student' ? (
             <View style={styles.formContainer}>
+              {error ? (
+                <Text style={styles.error}>{error}</Text>
+              ) : (
+                <Text></Text>
+              )}
               <TextInput
                 style={styles.input}
                 value={studentEmail}
@@ -92,6 +112,11 @@ const Login = ({navigation}) => {
             </View>
           ) : status === 'Company' ? (
             <View style={styles.formContainer}>
+              {error ? (
+                <Text style={styles.error}>{error}</Text>
+              ) : (
+                <Text></Text>
+              )}
               <TextInput
                 style={styles.input}
                 value={companyEmail}
@@ -202,4 +227,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  SignInAuth: (email, password) => dispatch(signInAuth(email, password)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);

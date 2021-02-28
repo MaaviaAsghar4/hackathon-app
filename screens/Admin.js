@@ -7,14 +7,29 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import {signInAuth} from '../store/actions/index';
+import {connect} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Admin = ({navigation}) => {
+const Admin = ({navigation, SignInAuth}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSignin = () => {
-    console.log('hello');
-    navigation.replace('AdminDetails');
+  const handleSignin = async () => {
+    try {
+      if (email !== 'abc@abc.com') {
+        setError('Invalid Admin Credentials');
+      } else {
+        setError('');
+        await AsyncStorage.setItem('email', email);
+        await SignInAuth(email, password);
+        console.log(email, password);
+        navigation.replace('AdminDetails');
+      }
+    } catch (error) {
+      setError('Failed to Login');
+    }
   };
   return (
     <ScrollView style={styles.mainContainer}>
@@ -23,6 +38,7 @@ const Admin = ({navigation}) => {
         <Text style={styles.subText}>Use Admin Credentials to Login</Text>
       </View>
       <View style={styles.formContainer}>
+        {error ? <Text style={styles.error}>{error}</Text> : <Text></Text>}
         <TextInput
           style={styles.input}
           value={email}
@@ -45,7 +61,11 @@ const Admin = ({navigation}) => {
   );
 };
 
-export default Admin;
+const mapDispatchToProps = (dispatch) => ({
+  SignInAuth: (email, password) => dispatch(signInAuth(email, password)),
+});
+
+export default connect(null, mapDispatchToProps)(Admin);
 
 const styles = StyleSheet.create({
   mainContainer: {

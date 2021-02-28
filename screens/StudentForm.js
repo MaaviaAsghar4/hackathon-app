@@ -7,6 +7,8 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StudentForm = ({navigation}) => {
   const [studentName, setStudentName] = useState('');
@@ -16,8 +18,22 @@ const StudentForm = ({navigation}) => {
   const [studentGrade, setStudentGrade] = useState('');
   const [studentSemester, setStudentSemester] = useState('');
 
-  const postInfo = () => {
+  const postInfo = async () => {
     console.log(studentName);
+    await AsyncStorage.setItem('studentEmail', studentEmail);
+    await AsyncStorage.setItem('studentName', studentName);
+    await AsyncStorage.setItem('studentGrade', studentGrade);
+    await AsyncStorage.setItem('studentOverview', studentOverview);
+    await AsyncStorage.setItem('studentSemester', studentSemester);
+    await AsyncStorage.setItem('university', university);
+    database().ref('/StudentInfo').push({
+      studentName,
+      university,
+      studentEmail,
+      studentOverview,
+      studentGrade,
+      studentSemester,
+    });
     navigation.replace('JobRequests');
   };
 

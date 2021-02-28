@@ -7,8 +7,11 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import {signUpAuth} from '../store/actions/index';
+import {connect} from 'react-redux';
+import database from '@react-native-firebase/database';
 
-const Signup = ({navigation}) => {
+const Signup = ({navigation, SignUpAuth}) => {
   const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState('');
   const [studentName, setStudentName] = useState('');
@@ -20,6 +23,7 @@ const Signup = ({navigation}) => {
   const [employeeDesignation, setemployeeDesignation] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [employeePassword, setEmployeePassword] = useState('');
+  const [error, setError] = useState('');
 
   const showStudentForm = () => {
     setStatus('Student');
@@ -31,20 +35,54 @@ const Signup = ({navigation}) => {
     setShowForm(true);
   };
 
-  const handleStudentSignin = () => {
-    console.log(studentName, studentEmail, university, studentPassword);
-    navigation.replace('StudentForm');
+  const handleStudentSignin = async () => {
+    try {
+      setError('');
+      await SignUpAuth(studentEmail, studentPassword);
+      database().ref('/Students').push({
+        studentName,
+        studentEmail,
+        university,
+        studentPassword,
+      });
+      console.log(studentName, studentEmail, university, studentPassword);
+      navigation.replace('StudentForm');
+      setStudentName('');
+      setUniversity('');
+      setStudentEmail('');
+      setStudentPassword('');
+    } catch (error) {
+      setError('Failed To Sign Up');
+    }
   };
 
-  const handleEmployeeSignin = () => {
-    console.log(
-      employeeName,
-      companyName,
-      employeeDesignation,
-      companyEmail,
-      employeePassword,
-    );
-    navigation.replace('CompanyForm');
+  const handleEmployeeSignin = async () => {
+    try {
+      setError('');
+      console.log(
+        employeeName,
+        companyName,
+        employeeDesignation,
+        companyEmail,
+        employeePassword,
+      );
+      await SignUpAuth(companyEmail, employeePassword);
+      database().ref('/Company').push({
+        employeeName,
+        companyName,
+        employeeDesignation,
+        companyEmail,
+        employeePassword,
+      });
+      setEmployeeName('');
+      setCompanyEmail('');
+      setCompanyName('');
+      setemployeeDesignation('');
+      setEmployeePassword('');
+      navigation.replace('CompanyForm');
+    } catch (error) {
+      setError('Failed To Sign Up');
+    }
   };
 
   const navigateToLogin = () => {
@@ -69,6 +107,11 @@ const Signup = ({navigation}) => {
         {showForm ? (
           status === 'Student' ? (
             <View style={styles.formContainer}>
+              {error ? (
+                <Text style={styles.error}>{error}</Text>
+              ) : (
+                <Text></Text>
+              )}
               <TextInput
                 style={styles.input}
                 value={studentName}
@@ -110,6 +153,11 @@ const Signup = ({navigation}) => {
             </View>
           ) : status === 'Company' ? (
             <View style={styles.formContainer}>
+              {error ? (
+                <Text style={styles.error}>{error}</Text>
+              ) : (
+                <Text></Text>
+              )}
               <TextInput
                 style={styles.input}
                 value={employeeName}
@@ -232,6 +280,13 @@ const styles = StyleSheet.create({
   btnContainers: {
     marginTop: 5,
   },
+  error: {
+    textAlign: 'center',
+  },
 });
 
-export default Signup;
+const mapDispatchToProps = (dispatch) => ({
+  SignUpAuth: (email, password) => dispatch(signUpAuth(email, password)),
+});
+
+export default connect(null, mapDispatchToProps)(Signup);

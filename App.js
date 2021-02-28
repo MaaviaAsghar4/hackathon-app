@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Signup from './screens/Signup';
 import Login from './screens/Login';
 import PostJob from './screens/PostJob';
@@ -18,11 +18,20 @@ import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import reducer from './store/reducers/index';
 import thunk from 'redux-thunk';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const store = createStore(reducer, applyMiddleware(thunk));
 const Stack = createStackNavigator();
 
 const App = () => {
+  const [email, setEmail] = useState('');
+  useEffect(() => {
+    const func = async () => {
+      const emailfn = await AsyncStorage.getItem('email');
+      setEmail(emailfn);
+      console.log(email);
+    };
+  });
   return (
     <Provider store={store}>
       <NavigationContainer>

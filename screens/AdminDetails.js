@@ -7,10 +7,18 @@ import {
   ScrollView,
 } from 'react-native';
 import AdminHeader from '../components/AdminHeader';
+import {logout} from '../store/actions/index';
+import {connect} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AdminDetails = ({navigation}) => {
+const AdminDetails = ({logout, navigation}) => {
   const routeChange = (route) => {
     navigation.navigate(route);
+  };
+  const handleLogout = async () => {
+    console.log('object');
+    await AsyncStorage.removeItem('email');
+    logout();
   };
   return (
     <ScrollView style={styles.mainContainer}>
@@ -21,8 +29,8 @@ const AdminDetails = ({navigation}) => {
         <Text style={styles.companyInfo}>Dashboard</Text>
       </View>
       <View style={styles.studentContainer}>
-        <Text style={styles.stdName}>Admin Email: {'stdName'}</Text>
-        <TouchableOpacity style={styles.btnContainer}>
+        <Text style={styles.stdName}>Admin Email: abc@abc.com</Text>
+        <TouchableOpacity style={styles.btnContainer} onPress={handleLogout}>
           <Text style={styles.btnText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -75,4 +83,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AdminDetails;
+const mapDispatchToProps = (dispatch) => ({
+  logout: () => dispatch(logout()),
+});
+
+export default connect(null, mapDispatchToProps)(AdminDetails);

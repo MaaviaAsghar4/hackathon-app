@@ -1,29 +1,44 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Header = ({routeChange}) => {
+  const [email, setEmail] = useState('');
+  useEffect(() => {
+    const asyncFunction = async () => {
+      const emailAdmin = await AsyncStorage.getItem('email');
+      setEmail(emailAdmin);
+      console.log(email);
+    };
+
+    asyncFunction();
+  }, []);
   return (
     <View>
       <View style={styles.header}>
         <Text style={styles.headerText}>ABC College</Text>
       </View>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={styles.tabs}
-          onPress={() => routeChange('StudentList')}>
-          <Text>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabs}
-          onPress={() => routeChange('PostJob')}>
-          <Text>Post Job</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabs}
-          onPress={() => routeChange('CompanyDetails')}>
-          <Text>Details</Text>
-        </TouchableOpacity>
-      </View>
+      {email !== 'abc@abc.com' ? (
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={styles.tabs}
+            onPress={() => routeChange('StudentList')}>
+            <Text>Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tabs}
+            onPress={() => routeChange('PostJob')}>
+            <Text>Post Job</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tabs}
+            onPress={() => routeChange('CompanyDetails')}>
+            <Text>Details</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <Text></Text>
+      )}
     </View>
   );
 };

@@ -8,15 +8,28 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Header from '../components/Header';
+import database from '@react-native-firebase/database';
 
 const PostJob = ({navigation}) => {
   const [activePosition, setActivePosition] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [positions, setPositions] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
+  const [jobOverview, setJobOverview] = useState('');
 
   const postJob = () => {
-    console.log(companyName, activePositions, positions, companyEmail);
+    database().ref('/Jobs').push({
+      activePosition,
+      companyName,
+      companyEmail,
+      positions,
+      jobOverview,
+    });
+    setActivePosition('');
+    setCompanyName('');
+    setCompanyEmail('');
+    setPositions('');
+    setJobOverview('');
   };
 
   const routeChange = (route) => {
@@ -56,8 +69,13 @@ const PostJob = ({navigation}) => {
             style={styles.input}
             value={positions}
             onChangeText={(text) => setPositions(text)}
-            secureTextEntry={true}
             placeholder="Enter No Of Positions"
+          />
+          <TextInput
+            style={styles.input}
+            value={jobOverview}
+            onChangeText={(text) => setJobOverview(text)}
+            placeholder="Enter Job Description"
           />
           <TouchableOpacity style={styles.btnContainer} onPress={postJob}>
             <Text style={styles.postBtn}>Post Job</Text>
