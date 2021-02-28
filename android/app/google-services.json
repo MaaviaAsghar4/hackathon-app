@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "8389841456",
+    "firebase_url": "https://react-chat-app-e41d9.firebaseio.com",
+    "project_id": "react-chat-app-e41d9",
+    "storage_bucket": "react-chat-app-e41d9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8389841456:android:34d9a4a07816869ffcd3f5",
+        "android_client_info": {
+          "package_name": "com.hackathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "8389841456-1m426smqq1rh2bn3lej165v7lliv7nf1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChL6l8FVheNCOOJbcCa15y9Hpl8RS2UV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8389841456-1m426smqq1rh2bn3lej165v7lliv7nf1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
